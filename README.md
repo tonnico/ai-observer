@@ -484,11 +484,10 @@ Add to `~/.codex/config.toml`:
 ```toml
 [otel]
 log_user_prompt = true  # set to false to redact prompts
+log_agent_responses = true # opt in to final response text
 exporter = { otlp-http = { endpoint = "http://localhost:4318/v1/logs", protocol = "binary" } }
 trace_exporter = { otlp-http = { endpoint = "http://localhost:4318/v1/traces", protocol = "binary" } }
 ```
-
-> **Note**: Codex CLI exports logs and traces (no metrics). The `trace_exporter` option is undocumented but available—if omitted, traces are sent to the same endpoint as logs.
 
 </details>
 
