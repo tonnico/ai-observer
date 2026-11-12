@@ -20,6 +20,37 @@ func newTestStore(t *testing.T) (*storage.DuckDBStore, func()) {
 	return store, func() { store.Close() }
 }
 
+func TestLoadCodexOTLPAgentResponse(t *testing.T) {
+	store, cleanup := newTestStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	now := time.Date(2026, 11, 12, 9, 0, 0, 0, time.UTC)
+	const sessionID = "codex-session"
+	logs := []api.LogRecord{
+		{Timestamp: now, ServiceName: "codex_cli_rs", Body: "codex.user_prompt", LogAttributes: map[string]string{
+			"event.name": "codex.user_prompt", "conversation.id": sessionID, "prompt": "What changed?",
+		}},
+		{Timestamp: now.Add(time.Second), ServiceName: "codex_cli_rs", Body: "codex.agent_response", LogAttributes: map[string]string{
+			"event.name": "codex.agent_response", "conversation.id": sessionID, "response": "The fix is ready.", "turn.id": "turn-1",
+		}},
+	}
+	if err := store.InsertLogs(ctx, logs); err != nil {
+		t.Fatalf("InsertLogs failed: %v", err)
+	}
+	got, err := Load(ctx, store, sessionID)
+	if err != nil {
+		t.Fatalf("Load failed: %v", err)
+	}
+	if len(got.Messages) != 2 {
+		t.Fatalf("expected prompt and response, got %+v", got.Messages)
+	}
+	if got.Messages[0].Role != "user" || got.Messages[0].Content != "What changed?" ||
+		got.Messages[1].Role != "assistant" || got.Messages[1].Content != "The fix is ready." {
+		t.Fatalf("unexpected transcript: %+v", got.Messages)
+	}
+}
+
 func TestExtractGenAIMessageText(t *testing.T) {
 	tests := []struct {
 		name     string

@@ -578,6 +578,12 @@ func extractMessageContent(eventName string, attrs map[string]string, body strin
 		// Imported transcripts already have content in body
 		return body
 
+	case "codex.agent_response":
+		if response := attrs["response"]; response != "" {
+			return response
+		}
+		return body
+
 	case "codex.tool_result":
 		// Codex tool results have output in attributes
 		if output, ok := attrs["output"]; ok && output != "" {

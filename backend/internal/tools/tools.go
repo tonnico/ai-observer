@@ -59,10 +59,11 @@ var providers = []Provider{
 		}},
 	{Tool: Codex, ServiceName: "codex_cli_rs", DisplayName: "OpenAI Codex CLI", SessionFiles: true,
 		TranscriptRoles: map[string]string{
-			"codex.user_prompt":   RoleUser,
-			"codex.api_request":   RoleAssistant,
-			"codex.tool_result":   RoleToolResult,
-			"codex.tool_decision": RoleToolUse,
+			"codex.user_prompt":    RoleUser,
+			"codex.agent_response": RoleAssistant,
+			"codex.api_request":    RoleAssistant,
+			"codex.tool_result":    RoleToolResult,
+			"codex.tool_decision":  RoleToolUse,
 		}},
 	{Tool: Gemini, ServiceName: "gemini_cli", DisplayName: "Gemini CLI", SessionFiles: true,
 		TranscriptRoles: map[string]string{

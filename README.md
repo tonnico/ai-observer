@@ -1045,12 +1045,14 @@ Local JSONL files store conversation messages and API usage per response. Full i
 
 Local JSONL files store conversation events and cumulative token counts. The full trace/span hierarchy (session → task → turn → stream) is only available via OTLP.
 
+For live OTLP transcripts, enable `otel.log_user_prompt` and `otel.log_agent_responses` in Codex. The latter exports final agent responses, limited to 64 KiB each. OTLP transcripts contain the events Codex exports and may omit intermediate messages or full tool output; importing or watching session files provides a different view of the conversation.
+
 | Metric | OTLP (`serve`) | Watch (`watch`) | Import (`import`) |
 |--------|:-:|:-:|:-:|
 | `codex_cli_rs.token.usage` | Yes (derived from logs) | Yes | Yes |
 | `codex_cli_rs.cost.usage` | Yes (derived from logs) | Yes | Yes |
 | Traces / spans | Yes | — | — |
-| Transcript logs | — | Yes | Yes |
+| Transcript logs | Partial (when enabled) | Yes | Yes |
 
 ### Gemini CLI
 
